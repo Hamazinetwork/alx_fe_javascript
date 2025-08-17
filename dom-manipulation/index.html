@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dynamic Quote Generator — Sync & Conflicts</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 0; padding: 24px; background: #f7f7f9; }
+    h1 { margin: 0 0 16px; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+    select, input, button { padding: 8px; }
+    #quoteDisplay {
+      margin: 16px 0; padding: 16px; min-height: 64px;
+      border-radius: 10px; background: #fff; border: 2px solid #333; font-size: 1.1rem;
+    }
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .spacer { flex: 1 1 auto; }
+    #banner {
+      display: none; margin: 8px 0; padding: 10px 12px; border-radius: 8px; font-weight: 600;
+    }
+    .banner-info { background: #e6f2ff; color: #084298; border: 1px solid #b6daff; }
+    .banner-warn { background: #fff4e5; color: #7a3e00; border: 1px solid #ffd8a8; }
+    #conflictsPanel {
+      display: none; background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 12px; margin-top: 8px;
+    }
+    .conflict-item { border-top: 1px dashed #ddd; padding: 8px 0; }
+    .conflict-item:first-child { border-top: none; }
+    .muted { color: #666; font-size: 0.92rem; }
+    .hint { color: #666; font-size: 0.9rem; margin-top: -4px; }
+  </style>
+</head>
+<body>
+  <h1>Dynamic Quote Generator</h1>
+
+  <!-- Filter + Actions -->
+  <div class="toolbar">
+    <label for="categoryFilter"><strong>Filter:</strong></label>
+    <select id="categoryFilter" onchange="filterQuotes()">
+      <option value="all">All Categories</option>
+      <!-- Dynamically populated -->
+    </select>
+
+    <button id="newQuote">Show New Quote</button>
+
+    <div class="spacer"></div>
+
+    <button id="syncNow">Sync Now</button>
+    <button id="simulateServer">Simulate Server Update</button>
+    <button id="toggleConflicts" style="display:none;">Resolve Conflicts</button>
+  </div>
+
+  <!-- Notification banner -->
+  <div id="banner" class="banner-info"></div>
+
+  <!-- Quote display -->
+  <div id="quoteDisplay"></div>
+  <div id="lastSeenHint" class="hint"></div>
+
+  <!-- Add Quote -->
+  <div class="row">
+    <input id="newQuoteText" type="text" placeholder="Enter a new quote"/>
+    <input id="newQuoteCategory" type="text" placeholder="Enter quote category"/>
+    <button onclick="addQuote()">Add Quote</button>
+  </div>
+
+  <!-- Import/Export -->
+  <div class="row">
+    <button id="exportJson">Export Quotes</button>
+    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)"/>
+    <span class="muted">Tip: Export your data regularly.</span>
+  </div>
+
+  <!-- Conflicts panel -->
+  <div id="conflictsPanel">
+    <h3>Conflicts Detected</h3>
+    <p class="muted">Server changes have overridden your local edits. You can manually restore your local version below.</p>
+    <div id="conflictsList"></div>
+    <div class="row">
+      <button id="dismissConflicts">Dismiss All</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
